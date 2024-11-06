@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Database Explorer</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+    <h1>Database Explorer</h1>
+    <label>Select Database:</label>
+    <select id="database-select">
+        {% for db in databases %}
+            <option value="{{ db }}">{{ db }}</option>
+        {% endfor %}
+    </select>
+
+    <h2>Tables</h2>
+    <div id="table-list"></div>
+
+    <h2>Table Data</h2>
+    <div id="table-data"></div>
+
+    <script>
+        $(document).ready(function() {
+            // Load tables when a database is selected
+            $('#database-select').change(function() {
+                var database = $(this).val();
+                $.get('/load_tables/', { database: database }, function(data) {
+                    var tablesHtml = '';
+                    $.each(data.tables, function(index, table) {
+                        tablesHtml += `<p><a href="#" class="table-link" data-table="${table}">${table}</a></p>`;
+                    });
+                    $('#table-list').html(tablesHtml);
+                });
+            });
+
+            // Load table data when a table is clicked
+            $(document).on('click', '.table-link', function(e) {
+                e.preventDefault();
+                var table = $(this).data('table');
+                var database = $('#database-select').val();
+                $.get('/view_table_data/', { database: database, table: table, page: 1 }, function(data) {
+                    var tableHtml = '<table border="1"><tr>';
+                    $.each(Object.keys(data[0]), function(index, key) {
+                        tableHtml += `<th>${key}</th>`;
+                    });
+                    tableHtml += '</tr>';
+                    $.each(data, function(index, row) {
+                        tableHtml += '<tr>';
+                        $.each(row, function(key, value) {
+                            tableHtml += `<td>${value}</td>`;
+                        });
+                        tableHtml += '</tr>';
+                    });
+                    tableHtml += '</table>';
+                    $('#table-data').html(tableHtml);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

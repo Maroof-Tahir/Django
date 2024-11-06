@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SQL Server Connection</title>
+</head>
+<body>
+    <h1>SQL Server Login</h1>
+    {% if error %}
+        <p style="color:red">{{ error }}</p>
+    {% endif %}
+    <form method="POST">
+        {% csrf_token %}
+        <label>Driver: </label><input type="text" name="driver" value="ODBC Driver 17 for SQL Server"><br>
+        <label>Server: </label><input type="text" name="server" value="LENOVO-PC\SQLEXPRESS"><br>
+        <label>Database: </label><input type="text" name="database" value="master"><br>
+        <label>Trusted Connection: </label><input type="checkbox" name="trusted_connection" checked><br>
+        <label>Username: </label><input type="text" name="username"><br>
+        <label>Password: </label><input type="password" name="password"><br>
+        <button type="submit">Connect</button>
+    </form>
+</body>
+</html>
